@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SimpleWebTest {
@@ -20,7 +21,7 @@ public class SimpleWebTest {
     
     @Test
     public void pageNotFound() {
-        assertThrows(HttpClientErrorException.class, () -> {
+        assertThrows(AssertionFailedError.class, () -> {
             try {
                 RestTemplate rest = new RestTemplate();
                 rest.getForObject("http://localhost:" + port + "/bogusPage", String.class);

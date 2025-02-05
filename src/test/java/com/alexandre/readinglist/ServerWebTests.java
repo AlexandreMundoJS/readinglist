@@ -65,5 +65,7 @@ public class ServerWebTests {
         WebElement dl = browser.findElement(By.className("bookHeadline"));
         assertEquals("BOOK TITLE by BOOK AUTHOR (ISBN: 1234567890)", dl.getText());
 
+        WebElement dt = browser.findElement(By.className("bookDescription"));
+        assertEquals("DESCRIPTION", dt.getText());
     }
 }

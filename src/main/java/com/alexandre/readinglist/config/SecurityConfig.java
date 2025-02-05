@@ -1,8 +1,9 @@
-package com.alexandre.config;
+package com.alexandre.readinglist.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -14,26 +15,54 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.alexandre.readinglist.entities.Reader;
 import com.alexandre.readinglist.repositories.ReaderRepository;
 
+import jakarta.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+// @Profile("production")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
     private ReaderRepository readerRepository;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/").hasRole("READER").anyRequest().permitAll())
-                .formLogin(login -> login.loginPage("/login").failureUrl("/login?error=true"));
-        return http.build();
+    public SecurityConfig(ReaderRepository readerRepository) {
+        this.readerRepository = readerRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        logger.info("SecurityConfig initialized");
     }
 
     @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        logger.info("Configuring security filter chain");
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/").hasRole("READER").anyRequest().permitAll())
+                .formLogin(login -> login.defaultSuccessUrl("/readingList/{reader}", true).failureUrl("/login?error=true").permitAll())
+                .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout=true").permitAll());
+        return http.build();                
+    }
+
+    @Bean
+    @Primary
     public UserDetailsService userDetailsService() {
         return username -> {
+            Reader reader = new Reader();
+            reader.setUsername("alexandre");
+            reader.setPassword(passwordEncoder().encode("password"));
+            reader.setFullname("Alexandre Machado");
+
+            readerRepository.save(reader);
             UserDetails user = readerRepository.findByUsername(username);
             if (user == null) {
                 throw new UsernameNotFoundException("User not found: " + username);
@@ -60,6 +89,5 @@ public class SecurityConfig {
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 
 }

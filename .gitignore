@@ -38,3 +38,5 @@ out/
 application.properties
 enkey
 *.jks
+*.log
+*.log.*

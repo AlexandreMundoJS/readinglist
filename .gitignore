@@ -36,3 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 application.properties
+enkey
+*.jks
+*.log
+*.log.*

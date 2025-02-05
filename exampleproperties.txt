@@ -4,3 +4,8 @@ spring.thymeleaf.cache=false
 
 spring.mvc.static-path-pattern=/static/**
 spring.resources.static-locations=classpath:/static/
+
+# Disable SSL temporarily
+# server.ssl.key-store=path-to-keys
+# server.ssl.key-store-password=your-password
+# server.ssl.key-password=your-password

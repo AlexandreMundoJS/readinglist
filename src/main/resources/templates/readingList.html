@@ -17,7 +17,7 @@
           <span th:if="${book.description}" th:text="${book.description}"
             >Description</span
           >
-          <span th:if="${book.description eq null}"
+          <span th:if="${book.description eq null || book.description eq ''}"
             >No description available</span
           >
         </dd>

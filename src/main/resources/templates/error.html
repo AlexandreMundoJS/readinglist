@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Oops!</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+    </head>
+    <body>
+        <div class="errorPage">
+            <span class="oops">Oops!</span>
+            <br/>
+            <img th:src="@{/MissingPage.png}" alt="MissingPage"/>
+            <p>There seems to be a problem with the page you requested
+                (<span th:text="${path}"></span>)
+            </p>
+            <p th:text="${'Details: ' + message}"></p>
+            <p th:text="'Rendered at: ' + ${#dates.format(new java.util.Date(), 'yyyy-MM-dd HH:mm:ss')}"></p>
+        </div>
+    </body>
+</html>

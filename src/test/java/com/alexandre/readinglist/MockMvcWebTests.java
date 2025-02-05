@@ -28,7 +28,7 @@ public class MockMvcWebTests {
 
     @Test
     public void homePage() throws Exception {
-        mockMvc.perform(get("/readingList/alexandre"))
+        mockMvc.perform(get("/alexandre"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("readingList"))
                 .andExpect(model().attributeExists("books"))
@@ -39,13 +39,13 @@ public class MockMvcWebTests {
     public void postBook() throws Exception {
         String reader = "alexandre";
 
-        mockMvc.perform(post("/readingList/" + reader).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/" + reader).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("title", "BOOK TITLE")
                 .param("author", "BOOK AUTHOR")
                 .param("isbn", "1234567890")
                 .param("description", "DESCRIPTION"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(header().string("Location", "/readingList/" + reader));
+                .andExpect(header().string("Location", "/" + reader));
 
         Book expectedBook = new Book();
         expectedBook.setId(1L);
@@ -55,7 +55,7 @@ public class MockMvcWebTests {
         expectedBook.setIsbn("1234567890");
         expectedBook.setDescription("DESCRIPTION");
 
-        mockMvc.perform(get("/readingList/" + reader))
+        mockMvc.perform(get("/" + reader))
                 .andExpect(status().isOk())
                 .andExpect(view().name("readingList"))
                 .andExpect(model().attributeExists("books"))

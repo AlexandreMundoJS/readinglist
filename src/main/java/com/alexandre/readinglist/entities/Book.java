@@ -19,11 +19,9 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String reader; // Ensure this field is private
+    private String reader;
     private String isbn;
     private String title;
     private String author;
     private String description;
-
-    // Lombok will generate the getter and setter for 'reader'
 }

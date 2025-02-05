@@ -1,6 +1,5 @@
 package com.alexandre.readinglist.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.alexandre.readinglist.entities.Reader;
@@ -48,7 +47,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.info("Configuring security filter chain");
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/").hasRole("READER").anyRequest().permitAll())
-                .formLogin(login -> login.defaultSuccessUrl("/readingList/{reader}", true).failureUrl("/login?error=true").permitAll())
+                .formLogin(login -> login.successHandler((request, response, authentication) -> {
+                    String username = authentication.getName();
+                    response.sendRedirect("/" + username);
+                }).failureUrl("/login?error=true").permitAll())
                 .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout=true").permitAll());
         return http.build();                
     }

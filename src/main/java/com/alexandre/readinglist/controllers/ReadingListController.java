@@ -14,14 +14,18 @@ import com.alexandre.readinglist.entities.Book;
 import com.alexandre.readinglist.repositories.ReadingListRepository;
 
 @Controller
-@RequestMapping("/readingList")
+@RequestMapping("/")
 public class ReadingListController {
-    @Autowired
     private ReadingListRepository readingListRepository;
+    
+    public ReadingListController(ReadingListRepository readingListRepository) {
+        this.readingListRepository = readingListRepository;
+    }
 
     @GetMapping("/{reader}")
     public String readersBooks(@PathVariable("reader") String reader, Model model) {
         List<Book> readingList = readingListRepository.findByReader(reader);
+        System.out.println("READING LIST " + readingList.toString());
         if (readingList != null) {
             model.addAttribute("books", readingList);
             model.addAttribute("reader", reader);
@@ -33,6 +37,6 @@ public class ReadingListController {
     public String addToReadingList(@PathVariable("reader") String reader, Book book) {
         book.setReader(reader);
         readingListRepository.save(book);
-        return "redirect:/readingList/" + reader;
+        return "redirect:/" + reader;
     }
 }
